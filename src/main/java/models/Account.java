@@ -6,7 +6,6 @@ public class Account {
     private String type;
     private String accountNumber;
 
-
     public Account(){
 
     }
