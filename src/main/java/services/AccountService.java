@@ -42,7 +42,7 @@ public class AccountService implements Serializable {
         Account toAccount = FindAccount(toAccountNo);
 
         if (fromAccount == null || toAccount == null) {
-            return "{'error': 'One of the accounts no. is wrong' }";
+            return "One of the accounts no. is wrong";
         }
 
         String returnMessage = fromAccount.transferFunds(toAccount, transferAmount);
@@ -50,9 +50,8 @@ public class AccountService implements Serializable {
         if(returnMessage.isEmpty()){
             accountRepository.updateAccount(fromAccount);
             accountRepository.updateAccount(toAccount);
-            returnMessage = "{'success': Account No " + fromAccountNo + " Balance is:" + fromAccount.getBalance()
-                          + " and Account No " + toAccountNo + " Balance is:" + toAccount.getBalance()
-                          + "}";
+            returnMessage = "Account No " + fromAccountNo + " Balance is:" + fromAccount.getBalance()
+                          + " and Account No " + toAccountNo + " Balance is:" + toAccount.getBalance();
         }
 
         return returnMessage;

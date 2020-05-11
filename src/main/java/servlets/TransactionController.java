@@ -18,8 +18,11 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @WebServlet(name = "TransactionController", urlPatterns = "/transaction/*")
 public class TransactionController extends HttpServlet {
@@ -38,34 +41,34 @@ public class TransactionController extends HttpServlet {
         ResponseResult responseResult;
         String pathInfo = request.getPathInfo();
         String[] path = pathInfo.split("/");
-
+        String transaction = path[1];
         String requestBody = Base.ReadRequestBody(request);
         JsonObject jsonObject = gson.fromJson(requestBody, JsonObject.class);
 
-        if (path[1].equals("withdraw") || (path[1].equals("deposit")) && path.length == 2) {
+        if (transaction.equals("withdraw") || (transaction.equals("deposit")) && path.length == 2) {
 
             String accountNo = jsonObject.get("accountNumber").getAsString();
             double amount = jsonObject.get("amount").getAsDouble();
-            if(path[1].equals("withdraw")) {
+
+            if(transaction.equals("withdraw")) {
                 accountService.withdraw(accountNo, amount);
             }
-            else if(path[1].equals("deposit")){
+            else if(transaction.equals("deposit")){
                 accountService.deposit(accountNo, amount);
             }
 
             double accountBalance = accountService.getAccountBalance(accountNo);
-            String result = "{'Balance': " + accountBalance + "}";
-            responseResult = new ResponseResult<String>("", Status.Success, result);
+            responseResult = new ResponseResult<Double>("Balance", Status.Success, accountBalance);
             Base.sendAsJson(response, responseResult);
         }
-        else if (path[1].equals("transferFunds") && path.length == 2)
+        else if (transaction.equals("transferFunds") && path.length == 2)
         {
             String fromAccountNo = jsonObject.get("fromAccountNo").getAsString();
             String toAccountNo = jsonObject.get("toAccountNo").getAsString();
             double amount = jsonObject.get("amount").getAsDouble();
 
             String msg = accountService.transferFunds(fromAccountNo, toAccountNo, amount);
-            responseResult = new ResponseResult<String>(msg, Status.Success, null);
+            responseResult = new ResponseResult<String>(msg, Status.Success, msg);
             Base.sendAsJson(response, responseResult);
         }
         else {
@@ -79,10 +82,14 @@ public class TransactionController extends HttpServlet {
         String pathInfo = request.getPathInfo();
         String[] path = pathInfo.split("/");
 
-        //in case pathInfo == "/" then return all accounts
+        //in case pathInfo == "/" then return all transactions
         if(pathInfo.equals("/")){
-            Collection<Account> accounts = accountService.getAllAccounts().values();
-            responseResult = new ResponseResult<Collection<Account>>("", Status.Success, accounts);
+
+             Stream<Account> stream = accountService.getAllAccounts().values().stream();
+            List<AccountEntry> accountEntries = stream.flatMap(account -> account.getAccountEntries().stream())
+                    .collect(Collectors.toList());
+
+            responseResult = new ResponseResult<List<AccountEntry>>("all transactions", Status.Success, accountEntries);
             Base.sendAsJson(response, responseResult);
             return;
         }
@@ -91,7 +98,7 @@ public class TransactionController extends HttpServlet {
             return;
         }
 
-        //In case path[1] has value then return specific account
+        //In case path[1] has value then return specific account's transactions
         String accountNumber = path[1];
         if(!accountNumber.isEmpty() && accountNumber != null) {
             if (!accountService.getAllAccounts().containsKey(accountNumber)) {
@@ -102,7 +109,7 @@ public class TransactionController extends HttpServlet {
                         .getAllAccounts()
                         .get(accountNumber)
                         .getAccountEntries();
-                responseResult = new ResponseResult<Collection<AccountEntry>>("", Status.Success, accountEntries);
+                responseResult = new ResponseResult<Collection<AccountEntry>>("all account's transactions", Status.Success, accountEntries);
                 Base.sendAsJson(response, responseResult);
             }
             return;

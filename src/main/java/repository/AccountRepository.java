@@ -50,7 +50,7 @@ public class AccountRepository implements Serializable {
 
     public String createAccount(Account account) {
         if (accounts.containsKey(account.getAccountNumber())) {
-            return "{'error': 'account already exist'}";
+            return "Account already exist";
         }
         else {
             accounts.put(account.getAccountNumber(), account);

@@ -1,7 +1,6 @@
 package servlets;
 
 import base.Base;
-import base.AccountTransaction;
 import base.ResponseResult;
 import base.Status;
 import com.google.gson.Gson;
@@ -15,13 +14,8 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 @WebServlet(name = "AccountController", urlPatterns = "/accounts/*")
 public class AccountController extends HttpServlet {
@@ -64,7 +58,7 @@ public class AccountController extends HttpServlet {
         //in case pathInfo == "/" then return all accounts
         if(pathInfo.equals("/")){
             Collection<Account> accounts = accountService.getAllAccounts().values();
-            responseResult = new ResponseResult<Collection<Account>>("", Status.Success, accounts);
+            responseResult = new ResponseResult<Collection<Account>>("all accounts", Status.Success, accounts);
             Base.sendAsJson(response, responseResult);
             return;
         }
@@ -75,20 +69,20 @@ public class AccountController extends HttpServlet {
 
         //In case path[1] has value then return specific account
         String accountNumber = path[1];
-        if(!accountNumber.isEmpty() && accountNumber != null) {
+        if(!accountNumber.isEmpty()) {
             if (!accountService.getAllAccounts().containsKey(accountNumber)) {
                 response.sendError(HttpServletResponse.SC_NOT_FOUND);
             }
             else {
                 Account account = accountService.getAllAccounts().get(accountNumber);
-                responseResult = new ResponseResult<Account>("", Status.Success, account);
+                responseResult = new ResponseResult<Account>("account", Status.Success, account);
                 Base.sendAsJson(response, responseResult);
             }
             return;
         }
 
         double balance = accountService.getAllAccounts().get(accountNumber).getBalance();
-        responseResult = new ResponseResult<Double>("", Status.Success, balance);
+        responseResult = new ResponseResult<Double>("balance", Status.Success, balance);
         Base.sendAsJson(response, responseResult);
     }
 

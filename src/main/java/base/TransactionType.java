@@ -1,12 +1,12 @@
 package base;
 
-public enum AccountTransaction {
+public enum TransactionType {
     Deposit,
     Withdraw,
     TransferFunds,
     GetAllAccounts,
     FindAccount,
-    SaveAccount,
+    save,
     GetBalance,
     UnKnown,
     NotFound

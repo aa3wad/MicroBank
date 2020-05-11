@@ -47,7 +47,17 @@
 					"raw": ""
 				},
 				"url": {
-					"raw": ""
+					"raw": "http://localhost:8080/MicroBank/accounts/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"MicroBank",
+						"accounts",
+						""
+					]
 				}
 			},
 			"response": []
@@ -62,7 +72,17 @@
 					"raw": ""
 				},
 				"url": {
-					"raw": ""
+					"raw": "http://localhost:8080/MicroBank/accounts/111",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"MicroBank",
+						"accounts",
+						"111"
+					]
 				}
 			},
 			"response": []
@@ -70,14 +90,31 @@
 		{
 			"name": "deposit",
 			"request": {
-				"method": "GET",
-				"header": [],
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
 				"body": {
 					"mode": "raw",
-					"raw": ""
+					"raw": "{\"amount\": 1000,\"accountNumber\": \"333\"}"
 				},
 				"url": {
-					"raw": ""
+					"raw": "http://localhost:8080/MicroBank/transaction/deposit",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"MicroBank",
+						"transaction",
+						"deposit"
+					]
 				}
 			},
 			"response": []
@@ -85,14 +122,31 @@
 		{
 			"name": "withdraw",
 			"request": {
-				"method": "GET",
-				"header": [],
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
 				"body": {
 					"mode": "raw",
-					"raw": ""
+					"raw": "{\"amount\": 50,\"accountNumber\": \"111\"}"
 				},
 				"url": {
-					"raw": ""
+					"raw": "http://localhost:8080/MicroBank/transaction/withdraw",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"MicroBank",
+						"transaction",
+						"withdraw"
+					]
 				}
 			},
 			"response": []
@@ -100,14 +154,31 @@
 		{
 			"name": "transferFunds",
 			"request": {
-				"method": "GET",
-				"header": [],
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
 				"body": {
 					"mode": "raw",
-					"raw": ""
+					"raw": "{\"fromAccountNo\": \"111\",\"toAccountNo\":\"222\",\"amount\": 50}"
 				},
 				"url": {
-					"raw": ""
+					"raw": "http://localhost:8080/MicroBank/transaction/transferFunds",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"MicroBank",
+						"transaction",
+						"transferFunds"
+					]
 				}
 			},
 			"response": []
@@ -122,7 +193,42 @@
 					"raw": ""
 				},
 				"url": {
+					"raw": "http://localhost:8080/MicroBank/transaction/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"MicroBank",
+						"transaction",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get account transactions",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
 					"raw": ""
+				},
+				"url": {
+					"raw": "http://localhost:8080/MicroBank/transaction/111",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"MicroBank",
+						"transaction",
+						"111"
+					]
 				}
 			},
 			"response": []
