@@ -5,6 +5,7 @@ public class Account {
     private double balance;
     private String type;
     private String accountNumber;
+    private String test;
 
     public Account(){
 
