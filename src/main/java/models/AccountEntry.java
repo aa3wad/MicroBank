@@ -2,37 +2,17 @@ package models;
 
 import java.time.LocalDate;
 
-public class Transaction {
-    private int transactionId;
+public class AccountEntry {
     private String accountNumber;
     private LocalDate date;
     private double transactionAmount;
+    private String description;
 
-    public Transaction(int transactionId, String accountNumber, double transactionAmount ){
-        this.transactionId= transactionId;
+    public AccountEntry(String accountNumber, double transactionAmount, String description){
         this.accountNumber= accountNumber;
         this.date= LocalDate.now();
         this.transactionAmount= transactionAmount;
-    }
-
-    public void setTransactionId(int transactionId) {
-        this.transactionId = transactionId;
-    }
-
-    public void setAccount(String accountNumber) {
-        this.accountNumber = accountNumber;
-    }
-
-    public void setDate(LocalDate date) {
-        this.date = date;
-    }
-
-    public void setTransactionAmount(double transactionAmount) {
-        this.transactionAmount = transactionAmount;
-    }
-
-    public int getTransactionId() {
-        return transactionId;
+        this.description = description;
     }
 
     public String getAccountNumber() {
@@ -50,7 +30,6 @@ public class Transaction {
     @Override
     public String toString() {
         return "Transaction{" +
-                "transactionId=" + transactionId +
                 ", account=" + accountNumber +
                 ", date=" + date +
                 ", transactionAmount=" + transactionAmount +

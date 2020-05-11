@@ -1,6 +1,7 @@
 package repository;
 
 import models.Account;
+import models.User;
 
 import java.io.Serializable;
 import java.util.*;
@@ -15,17 +16,21 @@ public class AccountRepository implements Serializable {
 
     public void prepareAccounts() {
         accounts = new HashMap<>();
+        List<User> users = Arrays.asList(
+                new User("anna", "111", "123"),
+                new User("bob", "222", "123"),
+                new User("omar", "333", "123"),
+                new User("ahmad", "111", "123"),
+                new User("abanoub", "222", "123"),
+                new User("Sherif", "333", "123"));
         List<Account> accountList = Arrays.asList(
-                new Account(1000, "Saving", "111"),
-                new Account(2000, "Saving", "222"),
-                new Account(3000, "Saving", "333"),
-                new Account(4000, "Checking", "444"),
-                new Account(5000, "Checking", "555"),
-                new Account(6000, "Checking", "666"));
+                new Account("Saving", "111", users.get(0)),
+                new Account("Saving", "222", users.get(1)),
+                new Account("Saving", "333", users.get(2)),
+                new Account("Checking", "444", users.get(3)),
+                new Account("Checking", "555", users.get(4)),
+                new Account("Checking", "666", users.get(5)));
 
-//        accounts = (HashMap<String , Account>) accountList.stream().collect(
-//                Collectors.toMap(Account::getAccountNumber, account -> account))
-//                ;
         for (Account account : accountList) {
             accounts.put(account.getAccountNumber(), account);
         }
@@ -43,13 +48,13 @@ public class AccountRepository implements Serializable {
         return accounts;
     }
 
-    public boolean createAccount(Account account) {
+    public String createAccount(Account account) {
         if (accounts.containsKey(account.getAccountNumber())) {
-            return false;
+            return "{'error': 'account already exist'}";
         }
         else {
             accounts.put(account.getAccountNumber(), account);
-            return true;
+            return "";
         }
 
     }
@@ -58,5 +63,7 @@ public class AccountRepository implements Serializable {
         accounts.put(account.getAccountNumber(), account);
         return true;
     }
+
+
 }
 
