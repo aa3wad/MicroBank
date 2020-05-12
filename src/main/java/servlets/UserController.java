@@ -40,65 +40,87 @@ public class UserController extends HttpServlet {
                 buffer.append(line);
             }
             String[] path = pathInfo.split("/");
-            String payload = buffer.toString();
-            if (pathInfo.equals("") || pathInfo.equals("/")) {
-                User user = gson.fromJson(payload, User.class);
-                if (userService.AddUser(user)) {
-                    sendAsJson(response, true);
-                } else {
-                    String error = "{message: user already exists}";
-                    gson.toJson(error);
-                    sendAsJson(response, error);
-                }
+            String requestData = buffer.toString();
+            if (path[1].equals("signUp")) {
+                signUp(request, response, requestData);
                 return;
             }
-            if (path[1].equals("login") && path.length == 2) {
-                JsonObject jsonObj = gson.fromJson(payload, JsonObject.class);
-                String username = jsonObj.get("userName").getAsString();
-                String password = jsonObj.get("password").getAsString();
-                boolean valid = false;
-                if (userService.validateUser(username, password)) {
-                    String accountNumber = userService.getAccountNumber(username);
-                    Account account = accountService.FindAccount(accountNumber);
-                    request.getSession().setAttribute("account", account);
-                    valid = true;
-                }
-                sendAsJson(response, valid);
+            else if (path[1].equals("login") && path.length == 2) {
+                login(request, response, requestData);
                 return;
             }
-            if (path[1].equals("logout") && path.length == 2) {
-                HttpSession session = request.getSession();
-                session.invalidate();
-                String error = "{you have logout successfully!}";
-                gson.toJson(error);
-                sendAsJson(response, error);
+            else if (path[1].equals("logout") && path.length == 2) {
+                logout(request, response);
             } else {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+                sendAsJson(response, false);
             }
         }
         catch (Exception ex){
            log(" an error occurred please check with the administrator");
         }
     }
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) {
 
-    }
-
-    private void sendAsJson(HttpServletResponse response, Object obj) {
-        try{
-            Base.fixHeaders(response);
-            response.setContentType("application/json");
-            String res = gson.toJson(obj);
-            PrintWriter out = response.getWriter();
-            out.print(res);
-            out.flush();
+    private void signUp(HttpServletRequest request, HttpServletResponse response, String requestData) {
+        try {
+            User user = gson.fromJson(requestData, User.class);
+            if (userService.AddUser(user)) {
+                sendAsJson(response, true);
+            } else {
+                sendAsJson(response,false);
+            }
         }
         catch (Exception ex){
             log(" an error occurred please check with the administrator");
         }
     }
 
+    private void login(HttpServletRequest request, HttpServletResponse response, String requestData) {
+        try {
+            JsonObject jsonObj = gson.fromJson(requestData, JsonObject.class);
+            String username = jsonObj.get("userName").getAsString();
+            String password = jsonObj.get("password").getAsString();
+            boolean valid = false;
+            if (userService.validateUser(username, password)) {
+                String accountNumber = userService.getAccountNumber(username);
+                Account account = accountService.FindAccount(accountNumber);
+                request.getSession().setAttribute("account", account);
+                valid = true;
+            }
+            sendAsJson(response, valid);
+        }
+        catch (Exception ex){
+            log(" an error occurred please check with the administrator");
+        }
+    }
 
+    private void logout(HttpServletRequest request, HttpServletResponse response) {
+        try{
+            HttpSession session = request.getSession();
+            session.invalidate();
+            sendAsJson(response, true);
+        }
+        catch (Exception ex){
+            log(" an error occurred please check with the administrator");
+        }
+    }
+
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) {
+
+    }
+
+    private void sendAsJson(HttpServletResponse response, Object success) {
+        try{
+            Base.fixHeaders(response);
+            response.setContentType("application/json");
+            String result = gson.toJson(success);
+            PrintWriter out = response.getWriter();
+            out.print(result);
+            out.flush();
+        }
+        catch (Exception ex){
+            log(" an error occurred please check with the administrator");
+        }
+    }
 
     @Override
     protected void doOptions(HttpServletRequest req, HttpServletResponse response) {
