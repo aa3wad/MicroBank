@@ -9,7 +9,7 @@ import java.util.HashMap;
 
 public class AccountService implements Serializable {
 
-    private AccountRepository accountRepository;
+    private final AccountRepository accountRepository;
 
     public AccountService() {
         accountRepository = new AccountRepository();
@@ -28,7 +28,6 @@ public class AccountService implements Serializable {
     }
 
     public String createAccount(Account account) {
-
         return accountRepository.createAccount(account);
     }
 
