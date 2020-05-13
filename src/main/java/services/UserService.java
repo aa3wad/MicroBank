@@ -7,11 +7,11 @@ import repository.UserRepository;
 public class UserService {
 
     private UserRepository userRepository;
-    private AccountService accountDaoService;
+    private AccountService accountService;
 
     public UserService() {
         userRepository = new UserRepository();
-        accountDaoService = new AccountService();
+        accountService = new AccountService();
     }
     public boolean AddUser(User user){
         if(!CheckUserExistence(user.getUserName())){
@@ -26,7 +26,7 @@ public class UserService {
     }
 
     public String getAccountNumber(String username){
-        return userRepository.getAccountNUmber(username);
+        return accountService.findAccountByUser(username) == null? "" : accountService.findAccountByUser(username).getAccountNumber() ;
     }
 
     public Boolean validateUser(String username, String password) {

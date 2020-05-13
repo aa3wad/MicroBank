@@ -42,6 +42,18 @@ public class AccountRepository implements Serializable {
         return Base.accounts.get(accountNumber);
     }
 
+    public Account findAccountByUser(String userName){
+
+        Account account = Base.accounts.values().stream()
+                .filter(acc-> acc.getCustomer().getUserName().equals(userName))
+                .findFirst()
+                .orElse(null);
+
+        return account;
+    }
+
+
+
     public void addAccount(Account account){
         Base.accounts.put(account.getAccountNumber(),account);
     }

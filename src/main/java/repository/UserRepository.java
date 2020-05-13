@@ -16,8 +16,8 @@ public class UserRepository implements Serializable {
     }
 
     private void CreateUsers() {
-        users.put("omar",new User("omar","333","abc123"));
-        users.put("ahmad",new User("ahmad","111","a1234"));
+        users.put("omar",new User("omar","333","123"));
+        users.put("ahmad",new User("ahmad","111","123"));
     }
 
     //get account number for rendering page

@@ -19,19 +19,13 @@ public class Base {
 
     public static void fillAccounts() {
         List<User> users = Arrays.asList(
-                new User("anna", "111", "123"),
-                new User("bob", "222", "123"),
                 new User("omar", "333", "123"),
-                new User("ahmad", "111", "123"),
-                new User("abanoub", "222", "123"),
-                new User("Sherif", "333", "123"));
+                new User("ahmad", "111", "123")
+                );
         List<Account> accountList = Arrays.asList(
                 new Account("Saving", "111", users.get(0)),
-                new Account("Saving", "222", users.get(1)),
-                new Account("Saving", "333", users.get(2)),
-                new Account("Checking", "444", users.get(3)),
-                new Account("Checking", "555", users.get(4)),
-                new Account("Checking", "666", users.get(5)));
+                new Account("Checking", "333", users.get(1))
+                );
 
         if(accounts.values().isEmpty()) {
             for (Account account : accountList) {

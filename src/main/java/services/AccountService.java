@@ -19,6 +19,10 @@ public class AccountService implements Serializable {
         return accountRepository.FindAccount(accountNumber);
     }
 
+    public Account findAccountByUser(String userName){
+        return accountRepository.findAccountByUser(userName);
+    }
+
     public void addAccount(Account account){
         accountRepository.addAccount(account);
     }

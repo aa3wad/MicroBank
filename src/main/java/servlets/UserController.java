@@ -1,6 +1,8 @@
 package servlets;
 
 import base.Base;
+import base.ResponseResult;
+import base.Status;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import models.Account;
@@ -14,6 +16,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.BufferedReader;
 import java.io.PrintWriter;
+import java.util.Collection;
 
 @WebServlet(name = "UserController", urlPatterns = "/user/*")
 public class UserController extends HttpServlet {
@@ -80,13 +83,17 @@ public class UserController extends HttpServlet {
             String username = jsonObj.get("userName").getAsString();
             String password = jsonObj.get("password").getAsString();
             boolean valid = false;
+            String accountNumber = null;
             if (userService.validateUser(username, password)) {
-                String accountNumber = userService.getAccountNumber(username);
+                accountNumber = userService.getAccountNumber(username);
                 Account account = accountService.FindAccount(accountNumber);
                 request.getSession().setAttribute("account", account);
                 valid = true;
             }
-            sendAsJson(response, valid);
+
+            Status status = valid ?  Status.Success :  Status.Failed;
+            ResponseResult responseResult = new ResponseResult<>("Login", status, accountNumber);;
+            sendAsJson(response, responseResult);
         }
         catch (Exception ex){
             log(" an error occurred please check with the administrator");
