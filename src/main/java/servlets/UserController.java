@@ -7,15 +7,12 @@ import models.Account;
 import models.User;
 import services.AccountService;
 import services.UserService;
-
-import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.PrintWriter;
 
 @WebServlet(name = "UserController", urlPatterns = "/user/*")
@@ -33,74 +30,105 @@ public class UserController extends HttpServlet {
         accountService = new AccountService();
         gson = new Gson();
     }
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String pathInfo = request.getPathInfo();
-        StringBuffer buffer = new StringBuffer();
-        BufferedReader reader = request.getReader();
-        String line;
-        while ((line = reader.readLine()) != null) {
-            buffer.append(line);
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) {
+        try{
+            String pathInfo = request.getPathInfo();
+            StringBuilder buffer = new StringBuilder();
+            BufferedReader reader = request.getReader();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                buffer.append(line);
+            }
+            String[] path = pathInfo.split("/");
+            String requestData = buffer.toString();
+            if (path[1].equals("signUp")) {
+                signUp(request, response, requestData);
+                return;
+            }
+            else if (path[1].equals("login") && path.length == 2) {
+                login(request, response, requestData);
+                return;
+            }
+            else if (path[1].equals("logout") && path.length == 2) {
+                logout(request, response);
+            } else {
+                sendAsJson(response, false);
+            }
         }
-        String[] path = pathInfo.split("/");
-        String payload = buffer.toString();
-        if (pathInfo == null || pathInfo.equals("/")) {
-            User user = gson.fromJson(payload, User.class);
+        catch (Exception ex){
+           log(" an error occurred please check with the administrator");
+        }
+    }
+
+    private void signUp(HttpServletRequest request, HttpServletResponse response, String requestData) {
+        try {
+            User user = gson.fromJson(requestData, User.class);
             if (userService.AddUser(user)) {
                 sendAsJson(response, true);
             } else {
-                String error = "{message: user already exists}";
-                gson.toJson(error);
-                sendAsJson(response, error);
+                sendAsJson(response,false);
             }
-            return;
         }
-        if (path[1].equals("login") && path.length == 2) {
-            JsonObject jsonObj = gson.fromJson(payload, JsonObject.class);
+        catch (Exception ex){
+            log(" an error occurred please check with the administrator");
+        }
+    }
+
+    private void login(HttpServletRequest request, HttpServletResponse response, String requestData) {
+        try {
+            JsonObject jsonObj = gson.fromJson(requestData, JsonObject.class);
             String username = jsonObj.get("userName").getAsString();
             String password = jsonObj.get("password").getAsString();
-//            System.out.println(username + " " + password);
             boolean valid = false;
             if (userService.validateUser(username, password)) {
                 String accountNumber = userService.getAccountNumber(username);
-                //Account account = accountService.getAccount(accountNumber);
-              //  request.getSession().setAttribute("account", account);
+                Account account = accountService.FindAccount(accountNumber);
+                request.getSession().setAttribute("account", account);
                 valid = true;
             }
             sendAsJson(response, valid);
-            return;
         }
+        catch (Exception ex){
+            log(" an error occurred please check with the administrator");
+        }
+    }
 
-        if (path[1].equals("logout") && path.length == 2) {
+    private void logout(HttpServletRequest request, HttpServletResponse response) {
+        try{
             HttpSession session = request.getSession();
             session.invalidate();
-            String error = "{you have logout successfully!}";
-            gson.toJson(error);
-            sendAsJson(response, error);
-            return;
-        } else {
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST);
-            return;
+            sendAsJson(response, true);
         }
+        catch (Exception ex){
+            log(" an error occurred please check with the administrator");
+        }
+    }
+
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) {
 
     }
 
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
+    private void sendAsJson(HttpServletResponse response, Object success) {
+        try{
+            Base.fixHeaders(response);
+            response.setContentType("application/json");
+            String result = gson.toJson(success);
+            PrintWriter out = response.getWriter();
+            out.print(result);
+            out.flush();
+        }
+        catch (Exception ex){
+            log(" an error occurred please check with the administrator");
+        }
     }
-
-    private void sendAsJson(HttpServletResponse response, Object obj) throws IOException {
-        response = Base.fixHeaders(response);
-        response.setContentType("application/json");
-        String res = gson.toJson(obj);
-        PrintWriter out = response.getWriter();
-        out.print(res);
-        out.flush();
-    }
-
-
 
     @Override
-    protected void doOptions(HttpServletRequest req, HttpServletResponse response) throws ServletException, IOException {
-        response = Base.fixHeaders(response);
+    protected void doOptions(HttpServletRequest req, HttpServletResponse response) {
+        try{
+            Base.fixHeaders(response);
+        }
+        catch (Exception ex){
+            log(" an error occurred please check with the administrator");
+        }
     }
 }
