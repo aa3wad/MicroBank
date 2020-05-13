@@ -33,6 +33,7 @@ public class TransactionController extends HttpServlet {
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
+        Base.fillAccounts();
         accountService = new AccountService();
         gson = new Gson();
     }
@@ -57,8 +58,8 @@ public class TransactionController extends HttpServlet {
                 accountService.deposit(accountNo, amount);
             }
 
-            double accountBalance = accountService.getAccountBalance(accountNo);
-            responseResult = new ResponseResult<Double>("Balance", Status.Success, accountBalance);
+            Account account = accountService.getAllAccounts().get(accountNo);
+            responseResult = new ResponseResult<Account>("Account Balance: " , Status.Success, account);
             Base.sendAsJson(response, responseResult);
         }
         else if (transaction.equals("transferFunds") && path.length == 2)
@@ -68,7 +69,8 @@ public class TransactionController extends HttpServlet {
             double amount = jsonObject.get("amount").getAsDouble();
 
             String msg = accountService.transferFunds(fromAccountNo, toAccountNo, amount);
-            responseResult = new ResponseResult<String>(msg, Status.Success, msg);
+            Account account = accountService.getAllAccounts().get(fromAccountNo);
+            responseResult = new ResponseResult<Account>(msg, Status.Success, account);
             Base.sendAsJson(response, responseResult);
         }
         else {

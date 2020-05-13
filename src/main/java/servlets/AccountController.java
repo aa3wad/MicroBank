@@ -26,6 +26,7 @@ public class AccountController extends HttpServlet {
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
+        Base.fillAccounts();
         accountService = new AccountService();
         gson = new Gson();
     }
